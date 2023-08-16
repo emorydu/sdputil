@@ -26,7 +26,7 @@ const (
 
 func syscallCreate(typ string, fd uintptr, v uintptr) (r1, r2 uintptr, err syscall.Errno) {
 	var signal uintptr
-	if typ == Ipv4 {
+	if typ == ipv4 {
 		signal = v4netAddRule
 	} else {
 		signal = v6netAddRule
@@ -37,7 +37,7 @@ func syscallCreate(typ string, fd uintptr, v uintptr) (r1, r2 uintptr, err sysca
 
 func syscallLen(typ string, fd uintptr) (r1, r2 uintptr, err syscall.Errno) {
 	var signal uintptr
-	if typ == Ipv4 {
+	if typ == ipv4 {
 		signal = v4netRuleLen
 	} else {
 		signal = v6netAddRule
@@ -48,7 +48,7 @@ func syscallLen(typ string, fd uintptr) (r1, r2 uintptr, err syscall.Errno) {
 
 func syscallLookup(typ string, fd uintptr, v uintptr) (r1, r2 uintptr, err syscall.Errno) {
 	var signal uintptr
-	if typ == Ipv4 {
+	if typ == ipv4 {
 		signal = v4netLookupRule
 	} else {
 		signal = v6netAddRule
@@ -59,7 +59,7 @@ func syscallLookup(typ string, fd uintptr, v uintptr) (r1, r2 uintptr, err sysca
 
 func syscallDelete(typ string, fd uintptr, v uintptr) (r1, r2 uintptr, err syscall.Errno) {
 	var signal uintptr
-	if typ == Ipv4 {
+	if typ == ipv4 {
 		signal = v4netDelRule
 	} else {
 		signal = v6netAddRule
