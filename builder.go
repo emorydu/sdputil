@@ -156,7 +156,7 @@ func doDiff(typ string, fd uintptr, v4Data []RuleT4, v6Data []RuleT6, addLen int
 				if ep != 0 {
 					return
 				}
-				log.Printf("sdputil: doDiff, add a variance rule successfully %v\n", rule)
+				log.Debugf("[SDPUTIL]: doDiff, add a variance rule successfully %v\n", rule)
 			}
 		}
 	}
@@ -185,7 +185,7 @@ func doDiff(typ string, fd uintptr, v4Data []RuleT4, v6Data []RuleT6, addLen int
 				if ep != 0 {
 					return
 				}
-				log.Printf("sdputil: doDiff, add a variance rule successfully %v\n", rule)
+				log.Debugf("[SDPUTIL]: doDiff, add a variance rule successfully %v\n", rule)
 			}
 		}
 	}
