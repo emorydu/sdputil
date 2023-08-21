@@ -7,7 +7,7 @@ package sdputil
 import (
 	"errors"
 	"fmt"
-	"log"
+	"github.com/emorydu/log"
 	"os"
 	"reflect"
 	"sync"
@@ -47,6 +47,7 @@ func Init(opts *Options) (Builder, error) {
 
 	builder, err := New(opts)
 	if err != nil {
+		log.Errorf("[SDPUTIL]: Error (failed to initialize the system rule constructor: %s)", err.Error())
 		return nil, nil
 	}
 
@@ -233,7 +234,7 @@ func (b *builder) ref(values interface{}) ([]RuleT4, []RuleT6, error) {
 		return nil, nil, errors.New("unsupported rule types")
 	}
 	switch retValue.Type().String() {
-	case "[]sdputil.RuleT4":
+	case "[]sdputil.RuleT4": // type switch
 		b.typ = ipv4
 		v4list = make([]RuleT4, 0, retValue.Len())
 	case "[]sdputil.RuleT6":
@@ -328,7 +329,7 @@ func (b *builder) delete(fd uintptr, values interface{}) error {
 					if ep != 0 {
 						return ep
 					}
-					log.Printf("sdputil: delete, delete the presence rule successfully %v\n", rule)
+					log.Debugf("[SDPUTIL]: delete, delete the presence rule successfully %v\n", rule)
 				}
 			}
 
@@ -353,7 +354,7 @@ func (b *builder) delete(fd uintptr, values interface{}) error {
 					if ep != 0 {
 						return ep
 					}
-					log.Printf("sdputil: delete, delete the presence rule successfully %v\n", rule)
+					log.Debugf("[SDPUTIL]: delete, delete the presence rule successfully %v\n", rule)
 				}
 			}
 		}
