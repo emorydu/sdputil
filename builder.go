@@ -247,11 +247,11 @@ func (b *builder) ref(values interface{}) ([]RuleT4, []RuleT6, error) {
 		switch b.typ {
 		case ipv4:
 			v4list = append(v4list, RuleT4{
-				SourceIp:          value.Field(0).Interface().(uint32),
-				Sourceip_extern:   value.Field(1).Interface().(uint32),
-				Sip_extern_switch: value.Field(2).Interface().(uint32),
-				DestIp:            value.Field(3).Interface().(uint32),
-				Destip_extern:     value.Field(4).Interface().(uint32),
+				SourceIp:          uint32(value.Field(0).Interface().(int)),
+				Sourceip_extern:   uint32(value.Field(1).Interface().(int)),
+				Sip_extern_switch: uint32(value.Field(2).Interface().(int)),
+				DestIp:            uint32(value.Field(3).Interface().(int)),
+				Destip_extern:     uint32(value.Field(4).Interface().(int)),
 				Dip_extern_switch: value.Field(5).Interface().(int32),
 				SourcePort:        value.Field(6).Interface().(uint16),
 				DestPort:          value.Field(7).Interface().(uint16),
