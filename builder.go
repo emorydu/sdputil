@@ -237,7 +237,7 @@ func (b *builder) ref(values interface{}) ([]RuleT4, []RuleT6, error) {
 		b.typ = ipv4
 		v4list = make([]RuleT4, 0, retValue.Len())
 	case "[]sdputil.RuleT6":
-		b.typ = ipv4
+		b.typ = ipv6
 		v6list = make([]RuleT6, 0, retValue.Len())
 	}
 
