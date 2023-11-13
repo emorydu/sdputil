@@ -28,6 +28,9 @@ type Builder interface {
 	// D delete a network-driven rule list.
 	D(interface{}) error
 
+	// Self the rules are self-updating.
+	Self(interface{}) error
+
 	// Close used to close the file stream for an open drive.
 	Close()
 }
@@ -85,6 +88,10 @@ func (b *builder) C(rules interface{}) error {
 
 func (b *builder) D(rules interface{}) error {
 	return b.delete(b.fd, rules)
+}
+
+func (b *builder) Self(rules interface{}) error {
+	return b.self(b.fd, rules)
 }
 
 // doCreate creates a rule in the rule list.
@@ -316,9 +323,12 @@ func (b *builder) delete(fd uintptr, values interface{}) error {
 
 	// TODO: post-optimization is expected
 	if len(v4s) != 0 {
-		for _, outer := range *v4List {
-			for _, inner := range v4s {
-				rule := inner
+		//for _, outer := range *v4List {
+		//	for _, inner := range v4s {
+		//		rule := inner
+		for _, outer := range v4s {
+			for _, inner := range *v4List {
+				rule := outer
 				if outer.SourceIp == inner.SourceIp &&
 					outer.SourcePort == inner.SourcePort &&
 					outer.DestIp == inner.DestIp &&
@@ -336,9 +346,9 @@ func (b *builder) delete(fd uintptr, values interface{}) error {
 	}
 
 	if len(v6s) != 0 {
-		for _, outer := range *v6List {
-			for _, inner := range v6s {
-				rule := inner
+		for _, outer := range v6s {
+			for _, inner := range *v6List {
+				rule := outer
 				if outer.Sourceippart1 == inner.Sourceippart1 &&
 					outer.Sourceippart2 == inner.Sourceippart2 &&
 					outer.Sourceippart3 == inner.Sourceippart3 &&
@@ -354,6 +364,88 @@ func (b *builder) delete(fd uintptr, values interface{}) error {
 						return ep
 					}
 					log.Printf("sdputil: delete, delete the presence rule successfully %v\n", rule)
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
+func (b *builder) self(fd uintptr, values interface{}) error {
+	var (
+		v4List *[]RuleT4
+		v6List *[]RuleT6
+	)
+
+	v4s, v6s, err := b.ref(values)
+	if err != nil {
+		return err
+	}
+
+	// gets the rule length
+	res, _, ep := syscallLen(b.typ, fd)
+	if ep != 0 {
+		return ep
+	}
+
+	v4Array := make([]RuleT4, int32(res))
+	v6Array := make([]RuleT6, int32(res))
+
+	if len(v4s) != 0 {
+		_, _, ep = syscallLookup(b.typ, fd, uintptr(unsafe.Pointer(&v4Array[0])))
+		if ep != 0 {
+			return ep
+		}
+		v4List = (*[]RuleT4)(unsafe.Pointer(&v4Array))
+	}
+	if len(v6s) != 0 {
+		_, _, ep = syscallLookup(b.typ, fd, uintptr(unsafe.Pointer(&v6Array[0])))
+		if ep != 0 {
+			return ep
+		}
+		v6List = (*[]RuleT6)(unsafe.Pointer(&v6Array))
+	}
+
+	// nac规则（） 查询规则（）	// nac规则不在查询规则中即可删除
+	if len(v4s) != 0 {
+		for _, nac := range *v4List {
+			for _, r := range v4s {
+				r := r
+				if nac.SourceIp != r.SourceIp &&
+					nac.SourcePort != r.SourcePort &&
+					nac.DestIp != r.DestIp &&
+					nac.DestPort != r.DestPort &&
+					nac.Protocol != r.Protocol {
+					_, _, ep := syscallDelete(b.typ, fd, uintptr(unsafe.Pointer(&nac)))
+					if ep != 0 {
+						return ep
+					}
+					log.Printf("sdputil: delete, delete the presence rule successfully %v\n", nac)
+				}
+			}
+		}
+	}
+
+	if len(v6s) != 0 {
+		for _, nac := range *v6List {
+			for _, r := range v6s {
+				r := r
+				if nac.Sourceippart1 != r.Sourceippart1 &&
+					nac.Sourceippart2 != r.Sourceippart2 &&
+					nac.Sourceippart3 != r.Sourceippart3 &&
+					nac.Sourceippart4 != r.Sourceippart4 &&
+					nac.Destippart1 != r.Destippart1 &&
+					nac.Destippart2 != r.Destippart2 &&
+					nac.Destippart3 != r.Destippart3 &&
+					nac.Destippart4 != r.Destippart4 &&
+					nac.Destport != r.Destport &&
+					nac.Protocol != r.Protocol {
+					_, _, ep := syscallDelete(b.typ, fd, uintptr(unsafe.Pointer(&nac)))
+					if ep != 0 {
+						return ep
+					}
+					log.Printf("sdputil: delete, delete the presence rule successfully %v\n", nac)
 				}
 			}
 		}
