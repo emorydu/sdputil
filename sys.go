@@ -40,7 +40,7 @@ func syscallLen(typ string, fd uintptr) (r1, r2 uintptr, err syscall.Errno) {
 	if typ == ipv4 {
 		signal = v4netRuleLen
 	} else {
-		signal = v6netAddRule
+		signal = v6netRuleLen
 	}
 
 	return syscall.Syscall(syscall.SYS_IOCTL, fd, signal, 0)
@@ -51,7 +51,7 @@ func syscallLookup(typ string, fd uintptr, v uintptr) (r1, r2 uintptr, err sysca
 	if typ == ipv4 {
 		signal = v4netLookupRule
 	} else {
-		signal = v6netAddRule
+		signal = v6netLookupRule
 	}
 
 	return syscall.Syscall(syscall.SYS_IOCTL, fd, signal, v)
@@ -62,7 +62,7 @@ func syscallDelete(typ string, fd uintptr, v uintptr) (r1, r2 uintptr, err sysca
 	if typ == ipv4 {
 		signal = v4netDelRule
 	} else {
-		signal = v6netAddRule
+		signal = v6netDelRule
 	}
 
 	return syscall.Syscall(syscall.SYS_IOCTL, fd, signal, v)
