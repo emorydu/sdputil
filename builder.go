@@ -407,46 +407,51 @@ func (b *builder) self(fd uintptr, values interface{}) error {
 		v6List = (*[]RuleT6)(unsafe.Pointer(&v6Array))
 	}
 
-	// nac规则（） 查询规则（）	// nac规则不在查询规则中即可删除
 	if len(v4s) != 0 {
 		for _, nac := range *v4List {
+			flag := false
 			for _, r := range v4s {
-				r := r
-				if nac.SourceIp != r.SourceIp &&
-					nac.SourcePort != r.SourcePort &&
-					nac.DestIp != r.DestIp &&
-					nac.DestPort != r.DestPort &&
-					nac.Protocol != r.Protocol {
-					_, _, ep := syscallDelete(b.typ, fd, uintptr(unsafe.Pointer(&nac)))
-					if ep != 0 {
-						return ep
-					}
-					log.Printf("sdputil: delete, delete the presence rule successfully %v\n", nac)
+				if nac.SourceIp == r.SourceIp &&
+					nac.SourcePort == r.SourcePort &&
+					nac.DestIp == r.DestIp &&
+					nac.DestPort == r.DestPort &&
+					nac.Protocol == r.Protocol {
+					flag = true
 				}
+			}
+			if !flag {
+				_, _, ep := syscallDelete(b.typ, fd, uintptr(unsafe.Pointer(&nac)))
+				if ep != 0 {
+					return ep
+				}
+				log.Printf("sdputil: delete, delete the presence rule successfully %v\n", nac)
 			}
 		}
 	}
 
 	if len(v6s) != 0 {
 		for _, nac := range *v6List {
+			flag := false
 			for _, r := range v6s {
-				r := r
-				if nac.Sourceippart1 != r.Sourceippart1 &&
-					nac.Sourceippart2 != r.Sourceippart2 &&
-					nac.Sourceippart3 != r.Sourceippart3 &&
-					nac.Sourceippart4 != r.Sourceippart4 &&
-					nac.Destippart1 != r.Destippart1 &&
-					nac.Destippart2 != r.Destippart2 &&
-					nac.Destippart3 != r.Destippart3 &&
-					nac.Destippart4 != r.Destippart4 &&
-					nac.Destport != r.Destport &&
-					nac.Protocol != r.Protocol {
-					_, _, ep := syscallDelete(b.typ, fd, uintptr(unsafe.Pointer(&nac)))
-					if ep != 0 {
-						return ep
-					}
-					log.Printf("sdputil: delete, delete the presence rule successfully %v\n", nac)
+				if nac.Sourceippart1 == r.Sourceippart1 &&
+					nac.Sourceippart2 == r.Sourceippart2 &&
+					nac.Sourceippart3 == r.Sourceippart3 &&
+					nac.Sourceippart4 == r.Sourceippart4 &&
+					nac.Destippart1 == r.Destippart1 &&
+					nac.Destippart2 == r.Destippart2 &&
+					nac.Destippart3 == r.Destippart3 &&
+					nac.Destippart4 == r.Destippart4 &&
+					nac.Destport == r.Destport &&
+					nac.Protocol == r.Protocol {
+					flag = true
 				}
+			}
+			if !flag {
+				_, _, ep := syscallDelete(b.typ, fd, uintptr(unsafe.Pointer(&nac)))
+				if ep != 0 {
+					return ep
+				}
+				log.Printf("sdputil: delete, delete the presence rule successfully %v\n", nac)
 			}
 		}
 	}
