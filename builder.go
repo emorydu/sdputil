@@ -429,7 +429,6 @@ func (b *builder) self(fd uintptr, values interface{}) error {
 				if ep != 0 {
 					return ep
 				}
-				log.Printf("sdputil: delete, delete the presence rule successfully %v\n", nac)
 			}
 		}
 	}
@@ -456,7 +455,6 @@ func (b *builder) self(fd uintptr, values interface{}) error {
 				if ep != 0 {
 					return ep
 				}
-				log.Printf("sdputil: delete, delete the presence rule successfully %v\n", nac)
 			}
 		}
 	}
