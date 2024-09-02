@@ -36,9 +36,10 @@ type Builder interface {
 }
 
 type builder struct {
-	typ string
-	fd  uintptr
-	f   *os.File
+	typ  string
+	fd   uintptr
+	f    *os.File
+	lock sync.Mutex
 }
 
 var mu sync.Mutex
@@ -76,7 +77,6 @@ func New(opts *Options) (Builder, error) {
 var _ Builder = (*builder)(nil)
 
 func (b *builder) Close() {
-	fmt.Println("closed")
 	err := b.f.Close()
 	if err != nil {
 		fmt.Println(err)
@@ -84,10 +84,14 @@ func (b *builder) Close() {
 }
 
 func (b *builder) C(rules interface{}) error {
+	b.lock.Lock()
+	defer b.lock.Unlock()
 	return b.create(b.fd, rules)
 }
 
 func (b *builder) D(rules interface{}) error {
+	b.lock.Lock()
+	defer b.lock.Unlock()
 	return b.delete(b.fd, rules)
 }
 
