@@ -414,6 +414,7 @@ func (b *builder) self(fd uintptr, values interface{}) error {
 	if len(v4s) != 0 {
 		for _, nac := range *v4List {
 			flag := false
+			fmt.Printf("SELF: %+v\n", nac)
 			for _, r := range v4s {
 				if nac.SourceIp == r.SourceIp &&
 					nac.SourcePort == r.SourcePort &&
@@ -423,6 +424,7 @@ func (b *builder) self(fd uintptr, values interface{}) error {
 					flag = true
 				}
 			}
+			fmt.Println("SELF FLAG:", flag)
 			if !flag {
 				_, _, ep := syscallDelete(b.typ, fd, uintptr(unsafe.Pointer(&nac)))
 				if ep != 0 {
