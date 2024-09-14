@@ -29,7 +29,7 @@ type Builder interface {
 	D(interface{}) error
 
 	// Self the rules are self-updating.
-	Self(interface{}) error
+	Self(interface{}, map[uint16]struct{}) error
 
 	// Close used to close the file stream for an open drive.
 	Close()
@@ -94,8 +94,8 @@ func (b *builder) D(rules interface{}) error {
 	return b.delete(b.fd, rules)
 }
 
-func (b *builder) Self(rules interface{}) error {
-	return b.self(b.fd, rules)
+func (b *builder) Self(rules interface{}, continueValues map[uint16]struct{}) error {
+	return b.self(b.fd, rules, continueValues)
 }
 
 // doCreate creates a rule in the rule list.
@@ -376,7 +376,7 @@ func (b *builder) delete(fd uintptr, values interface{}) error {
 	return nil
 }
 
-func (b *builder) self(fd uintptr, values interface{}) error {
+func (b *builder) self(fd uintptr, values interface{}, continueValues map[uint16]struct{}) error {
 	var (
 		v4List *[]RuleT4
 		v6List *[]RuleT6
@@ -414,7 +414,6 @@ func (b *builder) self(fd uintptr, values interface{}) error {
 	if len(v4s) != 0 {
 		for _, nac := range *v4List {
 			flag := false
-			fmt.Printf("SELF: %+v\n", nac)
 			for _, r := range v4s {
 				if nac.SourceIp == r.SourceIp &&
 					nac.SourcePort == r.SourcePort &&
@@ -424,8 +423,10 @@ func (b *builder) self(fd uintptr, values interface{}) error {
 					flag = true
 				}
 			}
-			fmt.Println("SELF FLAG:", flag)
 			if !flag {
+				if _, ok := continueValues[nac.DestPort]; ok {
+					continue
+				}
 				_, _, ep := syscallDelete(b.typ, fd, uintptr(unsafe.Pointer(&nac)))
 				if ep != 0 {
 					return ep
