@@ -454,6 +454,9 @@ func (b *builder) self(fd uintptr, values interface{}, continueValues map[uint16
 				}
 			}
 			if !flag {
+				if _, ok := continueValues[nac.Destport]; ok {
+					continue
+				}
 				_, _, ep := syscallDelete(b.typ, fd, uintptr(unsafe.Pointer(&nac)))
 				if ep != 0 {
 					return ep
