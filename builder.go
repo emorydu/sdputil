@@ -51,7 +51,7 @@ func Init(opts *Options) (Builder, error) {
 
 	builder, err := New(opts)
 	if err != nil {
-		return nil, nil
+		return nil, err
 	}
 
 	return builder, nil
