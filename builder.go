@@ -31,6 +31,8 @@ type Builder interface {
 	// Self the rules are self-updating.
 	Self(interface{}, map[uint16]struct{}) error
 
+	Show() error
+
 	// Close used to close the file stream for an open drive.
 	Close()
 }
@@ -80,6 +82,12 @@ func (b *builder) Close() {
 	if err != nil {
 		fmt.Println(err)
 	}
+}
+
+func (b *builder) Show() error {
+	b.lock.Lock()
+	defer b.lock.Unlock()
+	return b.show(b.fd)
 }
 
 func (b *builder) C(rules interface{}) error {
@@ -201,6 +209,10 @@ func doDiff(typ string, fd uintptr, v4Data []RuleT4, v6Data []RuleT6, addLen int
 	}
 
 	return 0, 0, 0
+}
+
+func (b *builder) show(fd uintptr) error {
+	return nil
 }
 
 func (b *builder) create(fd uintptr, values interface{}) error {
