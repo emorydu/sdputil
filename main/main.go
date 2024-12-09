@@ -23,12 +23,11 @@ var (
 )
 
 func init() {
-	item = flag.String("rule-item", "", "handle rule item")
+	item = flag.String("items", "", "handle rule item")
 	op = flag.String("op", "", "action (e.g: add/del/show)")
 
 	flag.Parse()
 }
-
 func main() {
 	bd, err := sdputil.Init(nil)
 	if err != nil {
@@ -37,11 +36,15 @@ func main() {
 	defer bd.Close()
 
 	var v []Rule
-	err = json.Unmarshal([]byte(*item), &v)
-	if err != nil {
-		panic(err)
+	var rules []sdputil.RuleT4
+	if *item != "" {
+		err = json.Unmarshal([]byte(*item), &v)
+		if err != nil {
+			panic(err)
+		}
+		rules = Pack(v)
 	}
-	rules := Pack(v)
+
 	switch *op {
 	case "add":
 		err = bd.C(rules)
