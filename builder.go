@@ -12,7 +12,6 @@ import (
 	"reflect"
 	"sync"
 	"syscall"
-	"time"
 	"unsafe"
 )
 
@@ -108,27 +107,21 @@ func (b *builder) Self(rules interface{}, continueValues map[uint16]struct{}) er
 
 // doCreate creates a rule in the rule list.
 func doCreate(typ string, fd uintptr, v4Data []RuleT4, v6Data []RuleT6) (r1, r2 uintptr, err syscall.Errno) {
-	fmt.Println(len(v4Data))
-	fmt.Println(v4Data)
 	for _, v := range v4Data {
-		fmt.Println("===================================")
 		v := v
-		r1, r2, ep := syscallCreate(typ, fd, uintptr(unsafe.Pointer(&v)))
-		time.Sleep(3 * time.Second)
-		fmt.Println("=====", r1, r2, ep)
+		_, _, ep := syscallCreate(typ, fd, uintptr(unsafe.Pointer(&v)))
 		if ep != 0 {
 			continue
 		}
-		return r1, r2, ep
+		//return r1, r2, ep
 
 	}
 	for _, v := range v6Data {
 		v := v
-		r1, r2, ep := syscallCreate(typ, fd, uintptr(unsafe.Pointer(&v)))
+		_, _, ep := syscallCreate(typ, fd, uintptr(unsafe.Pointer(&v)))
 		if ep != 0 {
 			continue
 		}
-		return r1, r2, ep
 	}
 
 	return 0, 0, 0
