@@ -102,20 +102,20 @@ func (b *builder) Self(rules interface{}, continueValues map[uint16]struct{}) er
 func doCreate(typ string, fd uintptr, v4Data []RuleT4, v6Data []RuleT6) (r1, r2 uintptr, err syscall.Errno) {
 	for _, v := range v4Data {
 		v := v
-		r1, r2, ep := syscallCreate(typ, fd, uintptr(unsafe.Pointer(&v)))
+		_, _, ep := syscallCreate(typ, fd, uintptr(unsafe.Pointer(&v)))
 		if ep != 0 {
 			continue
 		}
-		return r1, r2, ep
+		//return r1, r2, ep
 
 	}
 	for _, v := range v6Data {
 		v := v
-		r1, r2, ep := syscallCreate(typ, fd, uintptr(unsafe.Pointer(&v)))
+		_, _, ep := syscallCreate(typ, fd, uintptr(unsafe.Pointer(&v)))
 		if ep != 0 {
 			continue
 		}
-		return r1, r2, ep
+		//return r1, r2, ep
 	}
 
 	return 0, 0, 0
