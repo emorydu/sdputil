@@ -12,6 +12,7 @@ import (
 	"reflect"
 	"sync"
 	"syscall"
+	"time"
 	"unsafe"
 )
 
@@ -85,9 +86,8 @@ func (b *builder) Close() {
 }
 
 func (b *builder) Show() error {
-	b.lock.Lock()
-	defer b.lock.Unlock()
-	return b.show(b.fd)
+	_, _, _ = b.GetRule()
+	return nil
 }
 
 func (b *builder) C(rules interface{}) error {
@@ -108,9 +108,14 @@ func (b *builder) Self(rules interface{}, continueValues map[uint16]struct{}) er
 
 // doCreate creates a rule in the rule list.
 func doCreate(typ string, fd uintptr, v4Data []RuleT4, v6Data []RuleT6) (r1, r2 uintptr, err syscall.Errno) {
+	fmt.Println(len(v4Data))
+	fmt.Println(v4Data)
 	for _, v := range v4Data {
+		fmt.Println("===================================")
 		v := v
 		r1, r2, ep := syscallCreate(typ, fd, uintptr(unsafe.Pointer(&v)))
+		time.Sleep(3 * time.Second)
+		fmt.Println("=====", r1, r2, ep)
 		if ep != 0 {
 			continue
 		}
@@ -124,6 +129,31 @@ func doCreate(typ string, fd uintptr, v4Data []RuleT4, v6Data []RuleT6) (r1, r2 
 			continue
 		}
 		return r1, r2, ep
+	}
+
+	return 0, 0, 0
+}
+
+func (b *builder) GetRule() (r1, r2 uintptr, err syscall.Errno) {
+	// gets the rule length
+	res, _, ep := syscallLen("ipv4", b.fd)
+	if ep != 0 {
+		return
+	}
+
+	if res == 0 {
+		return 0, 0, 0
+	}
+	v4Array := make([]Rule, res)
+	r1, r2, err = syscallLookup("ipv4", b.fd, uintptr(unsafe.Pointer(&v4Array[0])))
+	if err != 0 {
+		return
+	}
+	var v4s *[]Rule
+	v4s = (*[]Rule)(unsafe.Pointer(&v4Array))
+
+	for _, nac := range *v4s {
+		fmt.Printf("GETRULE:%+v\n", nac)
 	}
 
 	return 0, 0, 0
