@@ -38,16 +38,24 @@ type Rules struct {
 	next              *Rule  //
 }
 
-func init() {
+//func init() {
+//	defer func() {
+//		if err := recover(); err != nil {
+//			fmt.Fprintln(os.Stderr, 1)
+//		}
+//	}()
+//
+//}
+
+func main() {
 	item = flag.String("items", "", "handle rule item")
 	op = flag.String("op", "", "action (e.g: add/del/show/clear)")
 
 	flag.Parse()
-}
-func main() {
+
 	bd, err := sdputil.Init(nil)
 	if err != nil {
-		panic(err)
+		fmt.Fprint(os.Stderr, 1)
 	}
 	defer bd.Close()
 
@@ -56,7 +64,8 @@ func main() {
 	if *item != "" {
 		err = json.Unmarshal([]byte(*item), &v)
 		if err != nil {
-			panic(err)
+			fmt.Fprintln(os.Stderr, 1)
+			return
 		}
 		rules = Pack(v)
 	}
@@ -65,21 +74,26 @@ func main() {
 	case "clear":
 		err = clean()
 		if err != nil {
-			panic(err)
+			fmt.Fprintln(os.Stderr, 1)
+		} else {
+			fmt.Fprintln(os.Stdout, 0)
 		}
 	case "add":
 		err = bd.C(rules)
 		if err != nil {
-			panic(err)
+			fmt.Fprintln(os.Stderr, 1)
+		} else {
+			fmt.Fprintln(os.Stdout, 0)
 		}
 	case "del":
 		err = bd.D(rules)
 		if err != nil {
-			panic(err)
+			fmt.Fprintln(os.Stderr, 1)
+		} else {
+			fmt.Fprintln(os.Stdout, 0)
 		}
-	case "show":
 	default:
-		panic("unknown action")
+		fmt.Fprintln(os.Stderr, 1)
 	}
 }
 

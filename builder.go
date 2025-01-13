@@ -197,7 +197,7 @@ func doDiff(typ string, fd uintptr, v4Data []RuleT4, v6Data []RuleT6, addLen int
 				if ep != 0 {
 					return
 				}
-				log.Printf("sdputil: doDiff, add a variance rule successfully %v\n", rule)
+				//log.Printf("sdputil: doDiff, add a variance rule successfully %v\n", rule)
 			}
 		}
 	}
@@ -377,7 +377,7 @@ func (b *builder) delete(fd uintptr, values interface{}) error {
 					if ep != 0 {
 						return ep
 					}
-					log.Printf("sdputil: delete, delete the presence rule successfully %v\n", rule)
+					//log.Printf("sdputil: delete, delete the presence rule successfully %v\n", rule)
 				}
 			}
 
