@@ -202,13 +202,13 @@ func main() {
 		err = CheckSDPMiddlewares()
 	}
 	if err != nil {
-		fmt.Fprintln(os.Stderr, err)
+		fmt.Fprintln(os.Stdout, err)
 		return
 	}
 
 	bd, err := sdputil.Init(nil)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, 1)
+		fmt.Fprintln(os.Stdout, 1)
 		return
 	}
 	defer bd.Close()
@@ -218,7 +218,7 @@ func main() {
 	if *item != "" {
 		err = json.Unmarshal([]byte(*item), &v)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, 1)
+			fmt.Fprintln(os.Stdout, 1)
 			return
 		}
 		rules = Pack(v)
@@ -228,26 +228,26 @@ func main() {
 	case "clear":
 		err = clean()
 		if err != nil {
-			fmt.Fprintln(os.Stderr, 1)
+			fmt.Fprintln(os.Stdout, 1)
 		} else {
 			fmt.Fprintln(os.Stdout, 0)
 		}
 	case "add":
 		err = bd.C(rules)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, 1)
+			fmt.Fprintln(os.Stdout, 1)
 		} else {
 			fmt.Fprintln(os.Stdout, 0)
 		}
 	case "del":
 		err = bd.D(rules)
 		if err != nil {
-			fmt.Fprintln(os.Stderr, 1)
+			fmt.Fprintln(os.Stdout, 1)
 		} else {
 			fmt.Fprintln(os.Stdout, 0)
 		}
 	default:
-		fmt.Fprintln(os.Stderr, 1)
+		fmt.Fprintln(os.Stdout, 1)
 	}
 }
 
